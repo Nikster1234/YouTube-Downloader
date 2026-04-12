@@ -1,0 +1,7 @@
+Downloads/
+*.part
+*.ytdl
+*.temp
+*.tmp
+*.log
+__pycache__/
