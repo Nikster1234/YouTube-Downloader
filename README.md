@@ -33,9 +33,13 @@ Required:
 Recommended:
 
 - `Node.js`
-  - The script requests a Node-based JS runtime for YouTube / supported sites
+  - The script requests a Node-based JS runtime for YouTube and supported sites when needed
 
-Install examples:
+## Install Notes
+
+### Install dependencies
+
+Examples:
 
 ```powershell
 python -m pip install --user -U yt-dlp
@@ -43,14 +47,27 @@ winget install -e --id Gyan.FFmpeg
 winget install -e --id OpenJS.NodeJS.LTS
 ```
 
-Notes:
+### Verify installation
 
-- If `yt-dlp.exe` is not in `PATH`, the script also tries `python -m yt_dlp`
-- The script auto-detects `ffmpeg` in `PATH` and also searches common WinGet install paths
+```powershell
+yt-dlp --version
+ffmpeg -version
+node -v
+```
+
+If `yt-dlp` is not directly in `PATH`, the script also tries:
+
+```powershell
+python -m yt_dlp --version
+```
+
+`ffmpeg` detection behavior:
+- first checks `ffmpeg` in `PATH`
+- then searches common WinGet install paths for `Gyan.FFmpeg`
 
 ## Usage
 
-### Interactive
+### Easiest Windows usage
 
 Double-click:
 
@@ -59,16 +76,23 @@ youtube_1080p60_downloader.bat
 ```
 
 The script will ask for:
-
 - source type
-- URL(s)
+- URL or URLs
 - mode
 - extension
 - optional headers for direct links
 
-### PowerShell CLI
+### Run from PowerShell
 
-YouTube / supported site, merged video + audio:
+Interactive without splash:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\youtube_1080p60_downloader.ps1 -NoSplash
+```
+
+### CLI Examples
+
+YouTube or supported site, merged video + audio:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\youtube_1080p60_downloader.ps1 `
@@ -88,6 +112,26 @@ powershell -ExecutionPolicy Bypass -File .\youtube_1080p60_downloader.ps1 `
   -Extension mp3
 ```
 
+Video only:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\youtube_1080p60_downloader.ps1 `
+  -Source yt `
+  -Urls "https://www.youtube.com/watch?v=VIDEO_ID" `
+  -Mode video `
+  -Extension mp4
+```
+
+Multiple URLs in one run:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\youtube_1080p60_downloader.ps1 `
+  -Source yt `
+  -Urls "https://www.youtube.com/watch?v=AAA","https://www.youtube.com/watch?v=BBB" `
+  -Mode both `
+  -Extension mkv
+```
+
 Direct media link with optional headers:
 
 ```powershell
@@ -98,12 +142,6 @@ powershell -ExecutionPolicy Bypass -File .\youtube_1080p60_downloader.ps1 `
   -Extension mp4 `
   -Referer "https://example.com/" `
   -UserAgent "Mozilla/5.0"
-```
-
-Hide the splash screen:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\youtube_1080p60_downloader.ps1 -NoSplash
 ```
 
 ## Output
@@ -127,6 +165,17 @@ Filename template:
 - Video mode downloads video-only output
 - Both mode merges video and audio into the selected container
 - Direct-link mode supports optional `Referer` and `User-Agent` headers
+
+## Troubleshooting
+
+- `Missing dependency: yt-dlp`
+  - Install `yt-dlp` or make sure `python -m yt_dlp` works
+- `Missing dependency: ffmpeg`
+  - Install `ffmpeg` and make sure it is in `PATH` or installed through WinGet in a detectable location
+- direct links fail
+  - try adding the correct `Referer` and `User-Agent`
+- YouTube extraction behaves inconsistently
+  - update `yt-dlp` and make sure `Node.js` is installed
 
 ## Known Limitations
 
